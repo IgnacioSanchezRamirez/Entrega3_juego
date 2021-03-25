@@ -11,6 +11,7 @@ class Entity {
      * @param y {Number} Posición vertical del elemento
      * @param speed {Number} Velocidad del elemento
      * @param myImageSrc {String} Ruta de la imagen del elemento
+     * @param lives {Number} Numero de vidas inicial
      */
     constructor (game, width, height, x, y, speed, myImageSrc) {
         this.game = game;
@@ -28,6 +29,7 @@ class Entity {
         this.image.style.width = this.width === "auto" ? "auto" : `${this.width}px`;
         this.image.style.top = `${this.y}px`;
         this.image.style.left = `${this.x}px`;
+        //this.lives = lives;
         document.body.appendChild(this.image);
     }
 

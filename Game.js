@@ -17,6 +17,19 @@ class Game {
         this.opponentShots = []; // Disparos del oponente
         this.xDown = null; //  Posición en la que el usuario ha tocado la pantalla
         this.paused = false; // Indica si el juego está pausado
+        this.score = SCORE_INICIAL; // La puntuacion inicial
+        this.lives = LIVES_INICIAL; //Vidas iniciales
+        this.youWin = false;
+        this.gameOver = false;
+    }
+
+
+    /**
+     * Suma un punto a score
+     */
+    sumarPunto() {
+        this.score = this.score + 1;
+        //this.score += 1;
     }
 
     /**
@@ -32,12 +45,13 @@ class Game {
             document.getElementById("pause").addEventListener("click", () => {
                 this.pauseOrResume();
             });
+            //iniciamos el juego y ajustamos la pantalla
             this.started = true;
             this.width = window.innerWidth;
             this.height = window.innerHeight; 
 
-            this.player = new Player(this);
-            this.timer = setInterval(() => this.update(), 50);
+            this.player = new Player(this); //jugadores
+            this.timer = setInterval(() => this.update(), 50); //temporizador cada 50 ms para actualizar la pantalla con las acciones del usuario
         }
     }
 
@@ -83,10 +97,15 @@ class Game {
      * Elimina al oponente del juego
      */
     removeOpponent () {
-        if (this.opponent) {
+
+        if(this.opponent instanceof Boss){
+            this.endGame();
+        }else if (this.opponent instanceof Opponent){
             document.body.removeChild(this.opponent.image);
+            this.opponent = new Boss(game);
         }
-        this.opponent = new Opponent(this);
+       
+        
     }
 
     /**
@@ -204,8 +223,15 @@ class Game {
      */
     endGame () {
         this.ended = true;
-        let gameOver = new Entity(this, this.width / 2, "auto", this.width / 4, this.height / 4, 0, GAME_OVER_PICTURE)
+
+        const picture = this.player.lives > 1 ? YOU_WIN_PICTURE : GAME_OVER_PICTURE;
+
+        //if (this.player.lives > 1){ const picture = YOU_WIN_PICTURE;}else{const picture = GAME_OVER_PICTURE;}
+        
+        let gameOver = new Entity(this, this.width / 2, "auto", this.width / 4, this.height / 4, 0, picture)
         gameOver.render();
+        
+        this.youWin = false;
     }
 
     /**
@@ -226,6 +252,8 @@ class Game {
             });
             this.checkCollisions();
             this.render();
+            document.getElementById("scoreli").innerHTML = 'Score: ' + this.score; //document.getElementById("scoreli").innerHTML = 'Score: ' + this.score;
+            document.getElementById("livesli").innerHTML = 'Lives: ' + this.player.lives; //$("#livesli").innerHTML = 'Lives: ' + this.player.lives;
         }
     }
 
@@ -243,5 +271,8 @@ class Game {
         this.opponentShots.forEach((shot) => {
             shot.render();
         });
+
+        
+
     }
 }
